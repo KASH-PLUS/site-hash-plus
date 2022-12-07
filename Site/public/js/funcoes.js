@@ -93,7 +93,7 @@ function listarCaixas() {
                         var link = document.createElement('a');
                         link.className = "nav-link";
 
-                        if (window.location == "http://localhost:3333/dashboard/index.html") { // verificando se está na index ou não
+                        if (window.location == "https://kashplus.azurewebsites.net/dashboard/index.html") { // verificando se está na index ou não
                             link.id = serialNumber;
                             link.focus = cep
                         }
