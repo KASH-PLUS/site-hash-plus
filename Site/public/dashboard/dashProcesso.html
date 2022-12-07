@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+	<title>Dashboard - KASH+</title>
+	<link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet"
+		href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i&amp;display=swap">
+	<link rel="stylesheet" href="assets/fonts/fontawesome-all.min.css">
+	<link rel="stylesheet" href="assets/css/styles.min.css">
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.2/dist/leaflet.css"
+		integrity="sha256-sA+zWATbFveLLNqWO2gtiw3HL/lh1giY/Inf1BJ0z14=" crossorigin="" />
+</head>
+
+<body id="page-top" onload="validarSessao(), listarCaixas(), verificarCargo(), gerarSelect()">
+	<div id="wrapper">
+		<nav class="navbar navbar-dark align-items-start sidebar sidebar-dark accordion bg-gradient-primary p-0"
+			style="background: rgb(0, 132, 156);">
+			<div class="container-fluid d-flex flex-column p-0"><a
+					class="navbar-brand d-flex justify-content-center align-items-center sidebar-brand m-0" href="#">
+					<div class="sidebar-brand-icon"><img src="assets/img/logo/logoWhite.png" width="60%"
+							style="margin-top: 10%;"></div>
+				</a>
+				<hr class="sidebar-divider my-0">
+				<ul id="accordionSidebar" class="navbar-nav text-light">
+					<li class="nav-item"><a class="nav-link" href="listarUser.html" id="link_list_user"><i
+								class="fas fa-user"></i><span>Lista de usuários</span></a><a class="nav-link"
+							href="addUser.html" id="link_add_user"><i class="fas fa-user-plus"></i><span>Adicionar
+								Usuário</span></a><a class="nav-link" href="addCaixa.html" id="link_add_caixa"><i
+								class="fas fa-server"></i><span>Cadastrar Caixa</span></a><a class="nav-link"
+							href="dashMapa.html" id="link_dash_mapa"><i class="fas fa-map"></i><span>Dash -
+								Região</span></a><a class="nav-link" href="dashProcesso.html" id="link_dash_proc"><i
+								class="fas fa-user"></i><span>Dash - Processos</span></a>
+						<a class="nav-link" href="dashOciosidade.html" id="link_dash_mapa"><i
+								class="fas fa-map"></i><span>Dash -
+								Ociosidade</span></a>
+					</li>
+					<li class="nav-item"><a id="link_dash" class="nav-link" data-bs-toggle="collapse" href="#div_caixas"
+							role="button" aria-expanded="false" aria-controls="div_caixas"><i
+								class="fas fa-tachometer-alt"></i><span>Dashboard</span></a>
+						<div class="collapse show" id="div_caixas">
+						</div>
+					</li>
+				</ul>
+				<div class="text-center d-none d-md-inline"><button class="btn rounded-circle border-0"
+						id="sidebarToggle" type="button"></button></div>
+			</div>
+		</nav>
+		<div class="d-flex flex-column" id="content-wrapper">
+			<div id="content">
+				<nav class="navbar navbar-light navbar-expand bg-white shadow mb-4 topbar static-top">
+					<div class="container-fluid">
+						<h5 style="color: var(--bs-navbar-brand-color);" id="titulo_cargo">Administrador</h5>
+						<ul class="navbar-nav flex-nowrap ms-auto">
+							<li class="nav-item dropdown no-arrow mx-1"></li>
+							<li class="nav-item dropdown no-arrow mx-1">
+								<div class="shadow dropdown-list dropdown-menu dropdown-menu-end"
+									aria-labelledby="alertsDropdown"></div>
+							</li>
+							<div class="d-none d-sm-block topbar-divider"></div>
+							<li class="nav-item dropdown no-arrow">
+								<div class="nav-item dropdown no-arrow"><a class="dropdown-toggle nav-link"
+										aria-expanded="false" data-bs-toggle="dropdown" href="#"><span
+											class="d-none d-lg-inline me-2 text-gray-600 small" id="span_user">Kash
+											User</span><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"
+											viewBox="0 0 24 24" fill="none" style="font-size: 33px;">
+											<path
+												d="M5.12104 17.8037C7.15267 16.6554 9.4998 16 12 16C14.5002 16 16.8473 16.6554 18.879 17.8037M15 10C15 11.6569 13.6569 13 12 13C10.3431 13 9 11.6569 9 10C9 8.34315 10.3431 7 12 7C13.6569 7 15 8.34315 15 10ZM21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"
+												stroke="currentColor" stroke-width="2" stroke-linecap="round"
+												stroke-linejoin="round"></path>
+										</svg></a>
+									<div class="dropdown-menu shadow dropdown-menu-end animated--grow-in"><a
+											class="dropdown-item" onclick="limparSessao()"><i
+												class="fas fa-sign-out-alt fa-sm fa-fw me-2 text-gray-400"></i>&nbsp;Sair</a>
+									</div>
+								</div>
+							</li>
+						</ul>
+					</div>
+				</nav>
+				<div class="container-fluid">
+					<div class="d-sm-flex justify-content-between align-items-center mb-4">
+						<h3 class="text-dark mb-0" id="h3_titulo">Dashboard - Processos<span
+								id="span_serialNumber"></span></h3>
+					</div>
+				</div>
+				<div class="container-fluid">
+					<div class="row mb-3">
+						<div class="col-auto col-lg-8 col-xl-12">
+							<div class="row">
+								<div class="col-lg-12 col-xl-12 offset-lg-3 offset-xl-0">
+									<div class="card shadow mb-3">
+										<div class="card-body">
+											<div class="row">
+												<div class="col">
+													<div>
+														<label class="form-label"><strong id="strong_titulo">Escolha uma
+																máquina</strong><br /></label>
+														<select class="form-select" id="slct_caixas">
+															<option value="maquina">--Escolha uma máquina--</option>
+														</select>
+													</div>
+													<div class="text-center mb-3"><button class="btn btn-primary btn-sm"
+															onclick="obterDadosGraficoCpu(), obterDadosGraficoRam(), listarProcessos()"
+															id="btn_ver" style="margin-top: 2%;">Ver</button>
+
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="container-fluid">
+					<div id="graficos" style="display: none;">
+						<div class="row">
+							<div class="col-8">
+								<div class="row">
+									<div class="col">
+										<div class="card shadow mb-4">
+											<div class="card-header d-flex justify-content-between align-items-center">
+												<h6 class="text-primary fw-bold m-0">Uso da CPU - Processo (%)</h6>
+											</div>
+											<div class="card-body">
+												<div class="chart-container" id="grafico_cpu"
+													style="position: relative; width: 40vw;">
+													<canvas id="myChartCpu">
+													</canvas>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col">
+										<div class="card shadow mb-4">
+											<div class="card-header d-flex justify-content-between align-items-center">
+												<h6 class="text-primary fw-bold m-0">Uso da RAM - Processo (%)</h6>
+											</div>
+											<div class="card-body">
+												<div class="chart-container" id="grafico_ram"
+													style="position: relative; width: 40vw;">
+													<canvas id="myChartRam">
+													</canvas>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-4">
+								<div class="card shadow mb-4">
+									<div class="card-header d-flex justify-content-between align-items-center">
+										<h6 class="text-primary fw-bold m-0">Processos que mais usam componente</h6>
+									</div>
+									<div class="card-body">
+										<div class="table-responsive table mt-2" id="dataTable" role="grid" aria-describedby="dataTable_info">
+											<table class="table my-0" id="dataTable">
+												<thead>
+													<tr>
+														<th>Hora</th>
+														<th>Processo</th>
+														<th>Cpu</th>
+														<th>Ram</th>
+													</tr>
+												</thead>
+												<tbody id="table_body">
+												</tbody>
+												<tfoot>
+													<tr></tr>
+												</tfoot>
+											</table>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<footer class="bg-white sticky-footer">
+					<div class="container my-auto">
+						<div class="text-center my-auto copyright"><span>Copyright © KASH+&nbsp;2022</span></div>
+					</div>
+				</footer>
+			</div><a class="border rounded d-inline scroll-to-top" href="#page-top"><i class="fas fa-angle-up"></i></a>
+		</div>
+		<script src="assets/bootstrap/js/bootstrap.min.js"></script>
+		<script src="assets/js/script.min.js"></script>
+		<script src="../js/funcoes.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+		<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+</body>
+
+</html>
+<script>
+
+	let proximaAtualizacao;
+
+	function gerarSelect() {
+
+		var cnpjVar = sessionStorage.BANCO_ID;
+
+		fetch("/usuarios/gerarSelect", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify({
+				cnpjServer: cnpjVar
+			})
+		}).then(function (resposta) {
+			console.log("ESTOU NO THEN DO select!")
+			console.log(resposta);
+			if (resposta.ok) {
+				resposta.json().then(json => {
+					serial = json[0].serialNumber;
+					nome = json[0].nome;
+
+					const select = document.querySelector('#slct_caixas');
+
+					for (let i = 0; i < json.length; i++) {
+						select.options[select.options.length] = new Option(json[i].nome + ' - ' + json[i].serialNumber, json[i].serialNumber);
+					}
+
+				});
+
+			} else {
+				console.log("Houve um erro ao tentar gerar o select!");
+
+				resposta.text().then(texto => {
+					console.log(texto)
+				});
+			}
+
+		}).catch(function (erro) {
+			console.log(erro);
+		})
+
+		return false;
+	}
+
+
+	function obterDadosGraficoCpu() {
+
+		var serialNumber = slct_caixas.value;
+
+		if (serialNumber != "maquina") {
+
+			graficos.style.display = 'block';
+
+			document.getElementById("myChartCpu").remove();
+
+			var divGrafico = document.getElementById("grafico_cpu");
+			var canvas = document.createElement("canvas");
+			canvas.id = "myChartCpu";
+
+			divGrafico.appendChild(canvas);
+
+			if (proximaAtualizacao != undefined) {
+				clearTimeout(proximaAtualizacao);
+			}
+
+			fetch(`/medidas/ultimasProcCpu/${serialNumber}`, { cache: 'no-store' }).then(function (response) {
+				if (response.ok) {
+					response.json().then(function (resposta) {
+
+
+						resposta.reverse();
+
+						var jsonVar = resposta
+
+						plotarGraficoCpu(jsonVar, serialNumber);
+					});
+				} else {
+					console.error('Nenhum dado encontrado ou erro na API');
+				}
+			})
+				.catch(function (error) {
+					console.error(`Erro na obtenção dos dados p/ gráfico: ${error.message}`);
+				});
+
+		} else {
+			Swal.fire({
+				title: 'Escolha uma máquina',
+				icon: 'error',
+				confirmButtonText: 'OK'
+			})
+			graficos.style.display = 'none';
+		}
+
+	}
+
+	function plotarGraficoCpu(jsonVar, serialNumber) {
+		console.log('iniciando plotagem do gráfico...');
+		console.log(serialNumber);
+
+		let labels = [];
+
+		var dados = {
+			labels: labels,
+			datasets: [
+				{
+					yAxisID: 'y-usoCpu',
+					label: 'Uso da cpu',
+					lineTension: 0.3,
+					backgroundColor: "rgba(78, 115, 223, 0.5)",
+					borderColor: "rgba(78, 115, 223, 1)",
+					pointRadius: 3,
+					pointBackgroundColor: "rgba(78, 115, 223, 1)",
+					pointBorderColor: "rgba(78, 115, 223, 1)",
+					pointHoverRadius: 3,
+					pointHoverBackgroundColor: "rgba(78, 115, 223, 1)",
+					pointHoverBorderColor: "rgba(78, 115, 223, 1)",
+					pointHitRadius: 10,
+					pointBorderWidth: 2,
+					data: [],
+				},
+				{
+					yAxisID: 'y-usoCpu',
+					label: 'Uso da cpu pelo processo',
+					lineTension: 0.3,
+					backgroundColor: "rgba(255,0, 0, 0.5)",
+					borderColor: "rgba(255,0, 0, 1)",
+					pointRadius: 3,
+					pointBackgroundColor: "rgba(255,0, 0, 1)",
+					pointBorderColor: "rgba(255,0, 0, 1)",
+					pointHoverRadius: 3,
+					pointHoverBackgroundColor: "rgba(255,0, 0, 1)",
+					pointHoverBorderColor: "rgba(255,0, 0, 1)",
+					pointHitRadius: 10,
+					pointBorderWidth: 2,
+					fill: true,
+					data: [],
+				},
+			],
+		};
+
+		for (let i = 0; i < jsonVar.length; i++) {
+			var registro = jsonVar[i];
+			labels.push(registro.processo + "-" + registro.dataHora);
+			dados.datasets[0].data.push(registro.registro);
+			dados.datasets[1].data.push(((registro.registro * registro.usoCpu) / 100).toFixed(2));
+		}
+
+		const config = {
+			type: 'line',
+			data: dados,
+			options: {
+				maintainAspectRatio: false,
+				responsive: true,
+			}
+		};
+
+		let myChartCpu = new Chart(
+			document.getElementById('myChartCpu'),
+			config
+		);
+
+
+		setTimeout(() => atualizarGraficoCpu(serialNumber, dados, myChartCpu), 10000);
+	}
+
+	function atualizarGraficoCpu(serialNumber, dados, myChartCpu) {
+
+		fetch(`/medidas/tempo-realProcCpu/${serialNumber}`, { cache: 'no-store' }).then(function (response) {
+			if (response.ok) {
+				response.json().then(function (novoRegistro) {
+
+					// tirando e colocando valores no gráfico
+					dados.labels.shift(); // apagar o primeiro
+					dados.labels.push(novoRegistro[0].processo + "-" + novoRegistro[0].dataHora); // incluir um novo momento
+
+					dados.datasets[0].data.shift();
+					dados.datasets[0].data.push(novoRegistro[0].registro);
+					dados.datasets[1].data.shift();
+					dados.datasets[1].data.push(((novoRegistro[0].registro * novoRegistro[0].usoCpu) / 100).toFixed(2));
+
+					myChartCpu.update();
+
+					// Altere aqui o valor em ms se quiser que o gráfico atualize mais rápido ou mais devagar
+					proximaAtualizacao = setTimeout(() => atualizarGraficoCpu(serialNumber, dados, myChartCpu), 10000);
+				});
+			} else {
+				console.error('Nenhum dado encontrado ou erro na API');
+				// Altere aqui o valor em ms se quiser que o gráfico atualize mais rápido ou mais devagar
+				proximaAtualizacao = setTimeout(() => atualizarGraficoCpu(serialNumber, dados, myChartCpu), 10000);
+			}
+		})
+			.catch(function (error) {
+				console.error(`Erro na obtenção dos dados p/ gráfico: ${error.message}`);
+			});
+
+	}
+
+	function obterDadosGraficoRam() {
+
+		var serialNumber = slct_caixas.value;
+
+		if (serialNumber != "maquina") {
+
+			graficos.style.display = 'block';
+
+			document.getElementById("myChartRam").remove();
+
+			var divGrafico = document.getElementById("grafico_ram");
+			var canvas = document.createElement("canvas");
+			canvas.id = "myChartRam";
+
+			divGrafico.appendChild(canvas);
+
+			if (proximaAtualizacao != undefined) {
+				clearTimeout(proximaAtualizacao);
+			}
+
+			fetch(`/medidas/ultimasProcRam/${serialNumber}`, { cache: 'no-store' }).then(function (response) {
+				if (response.ok) {
+					response.json().then(function (resposta) {
+
+						resposta.reverse();
+
+						var jsonVar = resposta;
+
+						plotarGraficoRam(jsonVar, serialNumber);
+					});
+				} else {
+					console.error('Nenhum dado encontrado ou erro na API');
+				}
+			})
+				.catch(function (error) {
+					console.error(`Erro na obtenção dos dados p/ gráfico: ${error.message}`);
+				});
+		} else {
+			Swal.fire({
+				title: 'Escolha uma máquina',
+				icon: 'error',
+				confirmButtonText: 'OK'
+			})
+			graficos.style.display = 'none';
+		}
+
+	}
+
+	function plotarGraficoRam(jsonVar, serialNumber) {
+		console.log('iniciando plotagem do gráfico...');
+		console.log(serialNumber);
+
+		let labels = [];
+
+		var dados = {
+			labels: labels,
+			datasets: [
+				{
+					yAxisID: 'y-usoRam',
+					label: 'Uso da ram',
+					lineTension: 0.3,
+					backgroundColor: "rgba(78, 115, 223, 0.5)",
+					borderColor: "rgba(78, 115, 223, 1)",
+					pointRadius: 3,
+					pointBackgroundColor: "rgba(78, 115, 223, 1)",
+					pointBorderColor: "rgba(78, 115, 223, 1)",
+					pointHoverRadius: 3,
+					pointHoverBackgroundColor: "rgba(78, 115, 223, 1)",
+					pointHoverBorderColor: "rgba(78, 115, 223, 1)",
+					pointHitRadius: 10,
+					pointBorderWidth: 2,
+					data: [],
+				},
+				{
+					yAxisID: 'y-usoRam',
+					label: 'Uso da ram pelo processo',
+					lineTension: 0.3,
+					backgroundColor: "rgba(255,0, 0, 0.5)",
+					borderColor: "rgba(255,0, 0, 1)",
+					pointRadius: 3,
+					pointBackgroundColor: "rgba(255,0, 0, 1)",
+					pointBorderColor: "rgba(255,0, 0, 1)",
+					pointHoverRadius: 3,
+					pointHoverBackgroundColor: "rgba(255,0, 0, 1)",
+					pointHoverBorderColor: "rgba(255,0, 0, 1)",
+					pointHitRadius: 10,
+					pointBorderWidth: 2,
+					fill: true,
+					data: [],
+				},
+			],
+			options: {
+				maintainAspectRatio: false,
+				responsive: true
+			}
+		};
+
+		for (i = 0; i < jsonVar.length; i++) {
+			var registro = jsonVar[i];
+			labels.push(registro.processo + "-" + registro.dataHora);
+			dados.datasets[0].data.push(((registro.registro / registro.metricaMaxima) * 100).toFixed(2));
+			dados.datasets[1].data.push(registro.usoRam);
+		}
+
+		const configRam = {
+			type: 'line',
+			data: dados,
+			options: {
+				maintainAspectRatio: false,
+				responsive: true,
+			}
+
+		};
+
+		let myChartRam = new Chart(
+			document.getElementById('myChartRam'),
+			configRam
+		);
+
+
+		setTimeout(() => atualizarGraficoRam(serialNumber, dados, myChartRam), 10000);
+	}
+
+	function atualizarGraficoRam(serialNumber, dados, myChartRam) {
+
+		fetch(`/medidas/tempo-realProcRam/${serialNumber}`, { cache: 'no-store' }).then(function (response) {
+			if (response.ok) {
+				response.json().then(function (novoRegistro) {
+
+					dados.labels.shift(); // apagar o primeiro
+					dados.labels.push(novoRegistro[0].processo + "-" + novoRegistro[0].dataHora); // incluir um novo momento
+
+					dados.datasets[0].data.shift();
+					dados.datasets[0].data.push(((novoRegistro[0].registro / novoRegistro[0].metricaMaxima) * 100).toFixed(2));
+					dados.datasets[1].data.shift();
+					dados.datasets[1].data.push(novoRegistro[0].usoRam);
+
+					myChartRam.update();
+
+					// Altere aqui o valor em ms se quiser que o gráfico atualize mais rápido ou mais devagar
+					proximaAtualizacao = setTimeout(() => atualizarGraficoRam(serialNumber, dados, myChartRam), 10000);
+				});
+			} else {
+				console.error('Nenhum dado encontrado ou erro na API');
+				// Altere aqui o valor em ms se quiser que o gráfico atualize mais rápido ou mais devagar
+				proximaAtualizacao = setTimeout(() => atualizarGraficoRam(serialNumber, dados, myChartRam), 10000);
+			}
+		})
+			.catch(function (error) {
+				console.error(`Erro na obtenção dos dados p/ gráfico: ${error.message}`);
+			});
+
+	}
+
+	function listarProcessos() {
+		
+		var serialNumberVar = slct_caixas.value;
+		table_body.innerHTML = ''
+
+		fetch("/usuarios/listarProcessos", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                serialNumberServer: serialNumberVar
+            })
+        }).then(function (resposta) {
+            console.log("ESTOU NO THEN DO listar()!")
+
+            if (resposta.ok) {
+                console.log(resposta);
+
+                resposta.json().then(json => {
+                    console.log(json);
+                    console.log(JSON.stringify(json));
+
+                    var tabela = document.getElementById("table_body");
+                    
+					for (var i = 0; i < json.length; i++) {
+                        data = json[i].dataHora;
+                        processo = json[i].processo;
+                        cpu = json[i].usoCpu;
+						ram = json[i].usoRam;
+
+                        var linha = document.createElement('tr');
+                        tabela.appendChild(linha);
+
+                        var colunaData = document.createElement('td');
+                        linha.appendChild(colunaData);
+                        colunaData.innerHTML = data;
+
+                        var colunaProcesso = document.createElement('td');
+                        linha.appendChild(colunaProcesso);
+                        colunaProcesso.innerHTML = processo;
+
+                        var colunaCpu = document.createElement('td');
+                        linha.appendChild(colunaCpu);
+                        colunaCpu.innerHTML = cpu;
+
+						var colunaRam = document.createElement('td');
+                        linha.appendChild(colunaRam);
+                        colunaRam.innerHTML = ram;
+                    }
+
+                });
+
+
+            } else {
+                console.log("Houve um erro ao tentar listar!");
+            }
+
+        }).catch(function (erro) {
+            console.log(erro);
+        })
+	
+	}
+
+</script>
+
+<!-- SELECT TOP 20 DATE_FORMAT(dataHora,'%H:%i:%s'), processo, usoCpu, usoRam FROM [dbo].[tbProcesso] 
+WHERE fkMaquina = '123' ORDER BY usoCpu DESC
+
+SELECT dataHora, processo, usoCpu, usoRam FROM tbProcesso 
+WHERE fkMaquina = '123' ORDER BY usoCpu DESC -->

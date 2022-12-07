@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Dash Mapa</title>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i&amp;display=swap">
+    <link rel="stylesheet" href="assets/fonts/fontawesome-all.min.css">
+    <link rel="stylesheet" href="assets/css/styles.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.2/dist/leaflet.css"
+        integrity="sha256-sA+zWATbFveLLNqWO2gtiw3HL/lh1giY/Inf1BJ0z14=" crossorigin="" />
+</head>
+
+<body id="page-top" onload="validarSessao(), listarQuantidade(), verificarCargo(), selectRegiao(), listarCaixas()">
+    <div id="wrapper">
+        <nav class="navbar navbar-dark align-items-start sidebar sidebar-dark accordion bg-gradient-primary p-0"
+            style="background: rgb(0, 132, 156);">
+            <div class="container-fluid d-flex flex-column p-0"><a
+                    class="navbar-brand d-flex justify-content-center align-items-center sidebar-brand m-0" href="#">
+                    <div class="sidebar-brand-icon"><img src="assets/img/logo/logoWhite.png" width="60%"
+                            style="margin-top: 10%;"></div>
+                </a>
+                <hr class="sidebar-divider my-0">
+                <ul id="accordionSidebar" class="navbar-nav text-light">
+                    <li class="nav-item"><a class="nav-link" href="listarUser.html" id="link_list_user"><i
+                                class="fas fa-user"></i><span>Lista de usuários</span></a><a class="nav-link"
+                            href="addUser.html" id="link_add_user"><i class="fas fa-user-plus"></i><span>Adicionar
+                                Usuário</span></a><a class="nav-link" href="addCaixa.html" id="link_add_caixa"><i
+                                class="fas fa-server"></i><span>Cadastrar Caixa</span></a><a class="nav-link"
+                            href="dashMapa.html" id="link_dash_mapa"><i class="fas fa-map"></i><span>Dash -
+                                Região</span></a><a class="nav-link" href="dashProcesso.html" id="link_dash_proc"><i
+                                class="fas fa-user"></i><span>Dash - Processos</span>
+                        </a>
+                        <a class="nav-link" href="dashOciosidade.html" id="link_dash_mapa"><i
+                                class="fas fa-map"></i><span>Dash -
+                                Ociosidade</span></a>
+                    </li>
+                    <li class="nav-item"><a id="link_dash" class="nav-link" data-bs-toggle="collapse" href="#div_caixas"
+                            role="button" aria-expanded="false" aria-controls="div_caixas"><i
+                                class="fas fa-tachometer-alt"></i><span>Dashboard</span></a>
+                        <div class="collapse show" id="div_caixas">
+                        </div>
+                    </li>
+                </ul>
+                <div class="text-center d-none d-md-inline"><button onclick="movaNav()"
+                        class="btn rounded-circle border-0" id="sidebarToggle" type="button"></button></div>
+            </div>
+        </nav>
+        <div class="d-flex flex-column" id="content-wrapper">
+            <div id="content">
+                <nav class="navbar navbar-light navbar-expand bg-white shadow mb-4 topbar static-top">
+                    <div class="container-fluid">
+                        <h5 style="color: var(--bs-navbar-brand-color);" id="titulo_cargo">Administrador</h5>
+                        <ul class="navbar-nav flex-nowrap ms-auto">
+                            <li class="nav-item dropdown no-arrow mx-1"></li>
+                            <li class="nav-item dropdown no-arrow mx-1">
+                                <div class="shadow dropdown-list dropdown-menu dropdown-menu-end"
+                                    aria-labelledby="alertsDropdown"></div>
+                            </li>
+                            <div class="d-none d-sm-block topbar-divider"></div>
+                            <li class="nav-item dropdown no-arrow">
+                                <div class="nav-item dropdown no-arrow"><a class="dropdown-toggle nav-link"
+                                        aria-expanded="false" data-bs-toggle="dropdown" href="#"><span
+                                            class="d-none d-lg-inline me-2 text-gray-600 small" id="span_user">Kash
+                                            User</span><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"
+                                            viewBox="0 0 24 24" fill="none" style="font-size: 33px;">
+                                            <path
+                                                d="M5.12104 17.8037C7.15267 16.6554 9.4998 16 12 16C14.5002 16 16.8473 16.6554 18.879 17.8037M15 10C15 11.6569 13.6569 13 12 13C10.3431 13 9 11.6569 9 10C9 8.34315 10.3431 7 12 7C13.6569 7 15 8.34315 15 10ZM21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"
+                                                stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                stroke-linejoin="round"></path>
+                                        </svg></a>
+                                    <div class="dropdown-menu shadow dropdown-menu-end animated--grow-in"><a
+                                            class="dropdown-item" onclick="limparSessao()"><i
+                                                class="fas fa-sign-out-alt fa-sm fa-fw me-2 text-gray-400"></i>&nbsp;Sair</a>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+                <div class="container-fluid">
+                    <h3 class="text-dark mb-4">Dash por região</h3>
+                    <div class="card shadow">
+                        <div class="card-body py-3">
+                            <p class="text-primary m-0 fw-bold">Filtrar por região</p>
+                            <div class="row">
+                                <select class="form-select" id="select_list_regiao" onchange="selectRegiao()">
+                                    <option value="0">Todas</option>
+                                    <option value="São Paulo">São Paulo</option>
+                                    <option value="Norte">Região Norte</option>
+                                    <option value="Oeste">Região Oeste</option>
+                                    <option value="Sudoeste">Região Sudoeste</option>
+                                    <option value="Sudeste">Região Sudeste</option>
+                                    <option value="Leste">Região Leste</option>
+                                </select>
+                                <div class="col">
+                                    <div class="card-body">
+                                        <img src="./assets/img/mapa.png">
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="mb-4"><label class="form-label"><strong></strong></label></div>
+                                    <div class="mb-3"><label class="form-label" style="color: #444444;"
+                                            id="sp"><strong>São Paulo</strong></label></div>
+                                    <div class="mb-3"><label class="form-label" style="color: #0079bf;"
+                                            id="norte"><strong>Região Norte</strong></label></div>
+                                    <div class="mb-3"><label class="form-label" style="color: #008e1d;"
+                                            id="oeste"><strong>Região Oeste</strong></label></div>
+                                    <div class="mb-3"><label class="form-label" style="color: #00becd;"
+                                            id="sudoeste"><strong>Região Sudoeste</strong></label></div>
+                                    <div class="mb-3"><label class="form-label" style="color: #00fffe;"
+                                            id="sudeste"><strong>Região Sudeste</strong></label></div>
+                                    <div class="mb-3"><label class="form-label" style="color: #00ff88;"
+                                            id="leste"><strong>Região Leste</strong></label></div>
+                                </div>
+                            </div>
+                            <div class="text-center mb-3">
+                            </div>
+                        </div>
+                        <div class="row">
+
+                        </div>
+
+                        <div class="card-body">
+                            <div class="table-responsive table mt-2" id="dataTable" role="grid"
+                                aria-describedby="dataTable_info">
+                                <table class="table my-0" id="dataTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Serial Number</th>
+                                            <th>CEP</th>
+                                            <th>Cidade</th>
+                                            <th>Região</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="table_body">
+                                    </tbody>
+                                    <tfoot>
+                                        <tr></tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div id="container_mapa">
+                            <h3>Localização dos Caixas:</h3>
+                            <div class="col-lg-12">
+                                <div id="mapaCaixa">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <footer class="bg-white sticky-footer">
+                        <div class="container my-auto">
+                            <div class="text-center my-auto copyright"><span>Copyright © KASH+&nbsp;2022</span></div>
+                        </div>
+                    </footer>
+                </div>
+            </div>
+        </div><a class="border rounded d-inline scroll-to-top" href="#page-top"><i class="fas fa-angle-up"></i></a>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/js/script.min.js"></script>
+    <script src="../js/funcoes.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.2/dist/leaflet.js"
+        integrity="sha256-o9N1jGDZrf5tS+Ft4gbIK7mYMipq9lqpVJ91xHSyKhg=" crossorigin=""></script>
+</body>
+
+</html>
+<script>
+
+    verifyNav()
+
+    var lati = []
+    var long = []
+    var latLon = { "latitude": lati, "longitude": long };
+
+    criarMapaCaixas()
+
+    function listarQuantidade() {
+
+        var qtdSP = 0
+        var qtdNorte = 0
+        var qtdOeste = 0
+        var qtdSudoeste = 0
+        var qtdSudeste = 0
+        var qtdLeste = 0
+        var cnpjVar = sessionStorage.BANCO_ID
+
+        fetch("/usuarios/listarQuantidade", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                cnpjServer: cnpjVar
+            })
+        }).then(function (resposta) {
+            console.log("resposta: ", resposta);
+            if (resposta.ok) {
+                resposta.json().then(json => {
+                    quantidade = json[0].qtd;
+                    regiao = json[0].regiao;
+                    console.log(json)
+                    for (var i = 0; i < json.length; i++) {
+                        if (json[i].regiao == 'São Paulo') {
+                            qtdSP++;
+                        }
+                        if (json[i].regiao == 'Norte') {
+                            qtdNorte++;
+                        }
+                        if (json[i].regiao == 'Oeste') {
+                            qtdOeste++;
+                        }
+                        if (json[i].regiao == 'Sudoeste') {
+                            qtdSudoeste++;
+                        }
+                        if (json[i].regiao == 'Sudeste') {
+                            qtdSudeste++;
+                        }
+                        if (json[i].regiao == 'Leste') {
+                            qtdLeste++;
+                        }
+                    }
+                    sp.innerHTML = `São Paulo: ${qtdSP}`;
+                    norte.innerHTML = `Norte: ${qtdNorte}`;
+                    oeste.innerHTML = `Oeste: ${qtdOeste}`;
+                    sudoeste.innerHTML = `Sudoeste: ${qtdSudoeste}`;
+                    sudeste.innerHTML = `Sudeste: ${qtdSudeste}`;
+                    leste.innerHTML = `Leste: ${qtdLeste}`;
+                })
+                console.log("Sucesso ao listar máquinas");
+            } else {
+                throw ("Houve um erro ao lsitar máquinas");
+            }
+        }).catch(function (resposta) {
+            console.log(`${resposta}`);
+        });
+    }
+
+    function selectRegiao() {
+        var cnpjVar = sessionStorage.BANCO_ID
+
+        table_body.innerHTML = "";
+
+        if (select_list_regiao.value == 0) {
+            var selectVar = 1;
+        } else {
+            var selectVar = 2;
+            var queryVar = select_list_regiao.value;
+        }
+
+        fetch("/usuarios/listarMaquinasRegiao", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                cnpjServer: cnpjVar,
+                queryServer: queryVar,
+                selectServer: selectVar
+            })
+        }).then(function (resposta) {
+            console.log("ESTOU NO THEN DO listar()!")
+
+            if (resposta.ok) {
+                console.log(resposta);
+
+                resposta.json().then(json => {
+                    console.log(JSON.stringify(json));
+
+                    console.log(json)
+
+                    var tabela = document.getElementById("table_body");
+                    for (var i = 0; i < json.length; i++) {
+                        serialNumber = json[i].serialNumber;
+                        cep = json[i].cep;
+                        cidade = json[i].cidade;
+                        regiao = json[i].regiao;
+
+                        var linha = document.createElement('tr');
+                        tabela.appendChild(linha);
+
+                        var colunaSerialNumber = document.createElement('td');
+                        linha.appendChild(colunaSerialNumber);
+                        colunaSerialNumber.innerHTML = serialNumber;
+
+                        var colunaCep = document.createElement('td');
+                        linha.appendChild(colunaCep);
+                        colunaCep.innerHTML = cep;
+
+                        var colunaCidade = document.createElement('td');
+                        linha.appendChild(colunaCidade);
+                        colunaCidade.innerHTML = cidade;
+
+                        var colunaRegiao = document.createElement('td');
+                        linha.appendChild(colunaRegiao);
+                        colunaRegiao.innerHTML = regiao;
+                    }
+
+                });
+
+            } else {
+
+                console.log("Houve um erro ao tentar realizar o login!");
+
+                resposta.text().then(texto => {
+                    console.log(texto);
+                });
+            }
+
+        }).catch(function (erro) {
+            console.log(erro);
+        })
+
+        return false;
+
+    }
+
+    function criarMapaCaixas() {
+        var cnpjVar = sessionStorage.BANCO_ID
+
+        fetch("/usuarios/criarMapaCaixas", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                cnpjServer: cnpjVar
+            })
+        }).then(function (resposta) {
+            console.log("resposta: ", resposta);
+            if (resposta.ok) {
+                resposta.json().then(json => {
+                    cep = json[0].cep;
+
+                    var ceps = []
+
+                    for (let i = 0; i < json.length; i++) {
+                        ceps[i] = json[i].cep;
+
+                        var script = document.createElement('script');
+                        script.src = 'https://viacep.com.br/ws/' + ceps[i] + '/json/?callback=performGeocodingRequest2'
+                        document.body.appendChild(script);
+
+                    }
+                })
+                console.log("Sucesso ao plotar mapa");
+            } else {
+                throw ("Houve um erro ao plotar mapa");
+            }
+        }).catch(function (resposta) {
+            console.log(`${resposta}`);
+        });
+
+    }
+
+    function performGeocodingRequest2(conteudo) {
+        var logradouro = ''
+        var bairro = ''
+        var localidade = ''
+        var text = ''
+
+        const APIKEY = "2e20e7f8-9be2-4e04-a213-75b2a2040023";
+
+        logradouro = conteudo.logradouro
+        bairro = conteudo.bairro
+        localidade = conteudo.localidade
+
+        text = `${logradouro}, ${bairro}, ${localidade}`
+
+        // // Set URL method depends
+
+        URL = `https://api.mymappi.com/v2/geocoding/direct?apikey=${APIKEY}&q=${text}&country_code=BR`;
+
+        // // Create HTTP Request
+        var xmlHttp = new XMLHttpRequest();
+        // // Send the request
+        xmlHttp.open("GET", URL, false);
+        // // Check Status response
+        xmlHttp.onload = function () {
+            // Update variable, it shows in HTML response
+            response_status = xmlHttp.status;
+            // Bad request != 200 :(
+            if (xmlHttp.status !== 200) {
+                console.log(`Response code ${response_status}. Check your browser log`)
+            } else {
+                console.log(`Response code ${response_status}. Check your browser log`);
+            }
+        };
+        // Close HTML Request
+        xmlHttp.send(null);
+        // Return data field from response to show on result section
+        dados = JSON.parse(xmlHttp.responseText).data;
+        console.log(JSON.stringify(dados))
+        // return JSON.parse(xmlHttp.responseText).data;
+
+        lati.push(dados[0].lat)
+        latLon.latitude = lati
+        long.push(dados[0].lon)
+        latLon.longitude = long
+
+    }
+
+    function gerarMapa() {
+
+        const cities = L.layerGroup();
+
+        for (var i = 0; i < latLon.latitude.length; i++) {
+            var nome = "local" + i
+            var nome = L.marker([latLon.latitude[i], latLon.longitude[i]]).bindPopup().addTo(cities)
+
+            if (i == latLon.latitude.length - 1) {
+                const map =
+                    L.map('mapaCaixa', {
+                        layers: [cities],
+                        zoom: 10
+                    }).setView([-23.558, -46.661], 9);
+                L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                })
+                    .addTo(map);
+                ;
+            }
+        }
+
+    }
+
+    function movaNav() {
+        if (localStorage.getItem("mode") != "aberto" && localStorage.getItem("mode") != "fechado") {
+            localStorage.setItem("mode", "fechado");
+        } else if (localStorage.getItem("mode") == "aberto") {
+            localStorage.setItem("mode", "fechado");
+        } else if (localStorage.getItem("mode") == "fechado") {
+            localStorage.setItem("mode", "aberto");
+        }
+    }
+
+    function verifyNav() {
+        if (localStorage.getItem("mode") == "aberto") {
+            $("#sidebarToggle").click();
+            localStorage.setItem("mode", "aberto");
+        }
+    }
+
+
+    setTimeout(gerarMapa, 1000)
+
+</script>
