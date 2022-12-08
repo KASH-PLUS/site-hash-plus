@@ -32,7 +32,7 @@ function buscarUltimasCondicaoCpu(serialNumber) {
     var instrucaoSql = ''
 
     if (process.env.AMBIENTE_PROCESSO == "producao") {
-        instrucaoSql = `select 
+        instrucaoSql = `select top 7
                             CONVERT(varchar, Horario, 111) as 'Data',
                             round(avg(Registro),2) as 'CPU'	
                         from vwConsumo
@@ -40,7 +40,7 @@ function buscarUltimasCondicaoCpu(serialNumber) {
                             and NumeroSerial = '${serialNumber}' 
                             and cast(Horario as time) between '10:00:00' and '22:00:00'
                         group by CONVERT(varchar, Horario, 111)
-						order by CONVERT(varchar, Horario, 111) desc;`;
+			order by CONVERT(varchar, Horario, 111) desc;`;
     } else if (process.env.AMBIENTE_PROCESSO == "desenvolvimento") {
         instrucaoSql = `select 
                             round(avg(Registro),2) as 'CPU'	
@@ -64,7 +64,7 @@ function buscarUltimasCondicaoRam(serialNumber) {
     var instrucaoSql = ''
 
     if (process.env.AMBIENTE_PROCESSO == "producao") {
-        instrucaoSql = `select 
+        instrucaoSql = `select top 7
                             CONVERT(varchar, Horario, 111) as 'Data',
                             round(avg(Registro),2) as 'RAM'	
                         from vwConsumo
@@ -72,7 +72,7 @@ function buscarUltimasCondicaoRam(serialNumber) {
                             and NumeroSerial = '${serialNumber}' 
                             and cast(Horario as time) between '10:00:00' and '22:00:00'
                         group by CONVERT(varchar, Horario, 111)
-						order by CONVERT(varchar, Horario, 111) desc;`;
+			order by CONVERT(varchar, Horario, 111) desc;`;
     } else if (process.env.AMBIENTE_PROCESSO == "desenvolvimento") {
         instrucaoSql = `select 
                             round(avg(Registro),2) as 'RAM'	
@@ -96,7 +96,7 @@ function buscarUltimasCondicaoDisco(serialNumber) {
     var instrucaoSql = ''
 
     if (process.env.AMBIENTE_PROCESSO == "producao") {
-        instrucaoSql = `select 
+        instrucaoSql = `select top 7
                             CONVERT(varchar, Horario, 111) as 'Data',
                             round(avg(Registro),2) as 'Disco'	
                         from vwConsumo
@@ -104,7 +104,7 @@ function buscarUltimasCondicaoDisco(serialNumber) {
                             and NumeroSerial = '${serialNumber}' 
                             and cast(Horario as time) between '10:00:00' and '22:00:00'
                         group by CONVERT(varchar, Horario, 111)
-						order by CONVERT(varchar, Horario, 111) desc;`;
+			order by CONVERT(varchar, Horario, 111) desc;`;
     } else if (process.env.AMBIENTE_PROCESSO == "desenvolvimento") {
         instrucaoSql = `select 
                             DATE_FORMAT(Horario,'%Y/%m/%d') as 'Data',
