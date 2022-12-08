@@ -38,7 +38,7 @@ function buscarUltimasCondicaoCpu(serialNumber) {
                         from vwConsumo
                             where Componente = 'cpu' 
                             and NumeroSerial = '${serialNumber}' 
-                            and cast(Horario as time) between '10:00:00' and '23:59:00'
+                            and cast(Horario as time) between '10:00:00' and '22:00:00'
                         group by CONVERT(varchar, Horario, 111)
 						order by CONVERT(varchar, Horario, 111) desc;`;
     } else if (process.env.AMBIENTE_PROCESSO == "desenvolvimento") {
@@ -47,9 +47,9 @@ function buscarUltimasCondicaoCpu(serialNumber) {
                         from vwConsumo 
                             where Componente = 'cpu'
                             and NumeroSerial = '${serialNumber}' 
-                            and cast(Horario as time) between '10:00:00' and '23:59:00'
+                            and cast(Horario as time) between '10:00:00' and '22:00:00'
                         group by cast(Horario as date)
-                        order by cast(Horario as date) desc limit 7;`;
+                        order by cast(Horario as date) desc limit 7`;
     } else {
         console.log("\nO AMBIENTE (produção OU desenvolvimento) NÃO FOI DEFINIDO EM app.js\n");
         return
@@ -70,7 +70,7 @@ function buscarUltimasCondicaoRam(serialNumber) {
                         from vwConsumo
                             where Componente = 'ram' 
                             and NumeroSerial = '${serialNumber}' 
-                            and cast(Horario as time) between '10:00:00' and '23:59:00'
+                            and cast(Horario as time) between '10:00:00' and '22:00:00'
                         group by CONVERT(varchar, Horario, 111)
 						order by CONVERT(varchar, Horario, 111) desc;`;
     } else if (process.env.AMBIENTE_PROCESSO == "desenvolvimento") {
@@ -79,7 +79,7 @@ function buscarUltimasCondicaoRam(serialNumber) {
                         from vwConsumo 
                             where Componente = 'ram'
                             and NumeroSerial = '${serialNumber}'
-                            and cast(Horario as time) between '10:00:00' and '23:59:00'
+                            and cast(Horario as time) between '10:00:00' and '22:00:00'
                         group by cast(Horario as date)
                         order by cast(Horario as date) desc limit 7;`;
     } else {
@@ -102,7 +102,7 @@ function buscarUltimasCondicaoDisco(serialNumber) {
                         from vwConsumo
                             where Componente = 'disco' 
                             and NumeroSerial = '${serialNumber}' 
-                            and cast(Horario as time) between '10:00:00' and '23:59:00'
+                            and cast(Horario as time) between '10:00:00' and '22:00:00'
                         group by CONVERT(varchar, Horario, 111)
 						order by CONVERT(varchar, Horario, 111) desc;`;
     } else if (process.env.AMBIENTE_PROCESSO == "desenvolvimento") {
@@ -112,7 +112,7 @@ function buscarUltimasCondicaoDisco(serialNumber) {
                         from vwConsumo 
                             where Componente = 'disco'
                             and NumeroSerial = '${serialNumber}' 
-                            and cast(Horario as time) between '10:00:00' and '23:59:00'
+                            and cast(Horario as time) between '10:00:00' and '22:00:00'
                         group by cast(Horario as date)
                         order by cast(Horario as date) desc limit 7;`;
     } else {

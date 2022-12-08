@@ -433,8 +433,10 @@ function verificarTemperatura(req, res) {
 function criarMapaCaixas(req, res) {
 
     var cnpj = req.body.cnpjServer;
+    var select = req.body.selectServer;
+    var query = req.body.queryServer;
 
-    usuarioModel.criarMapaCaixas(cnpj)
+    usuarioModel.criarMapaCaixas(cnpj, query, select)
         .then(function (resultado) {
             if (resultado.length > 0) {
                 res.status(200).json(resultado);
