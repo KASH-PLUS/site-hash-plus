@@ -14,7 +14,8 @@
         integrity="sha256-sA+zWATbFveLLNqWO2gtiw3HL/lh1giY/Inf1BJ0z14=" crossorigin="" />
 </head>
 
-<body id="page-top" onload="validarSessao(), listarQuantidade(), verificarCargo(), selectRegiao(), listarCaixas()">
+<body id="page-top"
+    onload="validarSessao(), listarQuantidade(), verificarCargo(), selectRegiao(), criarMapaCaixas(), listarCaixas()">
     <div id="wrapper">
         <nav class="navbar navbar-dark align-items-start sidebar sidebar-dark accordion bg-gradient-primary p-0"
             style="background: rgb(0, 132, 156);">
@@ -87,7 +88,8 @@
                         <div class="card-body py-3">
                             <p class="text-primary m-0 fw-bold">Filtrar por região</p>
                             <div class="row">
-                                <select class="form-select" id="select_list_regiao" onchange="selectRegiao()">
+                                <select class="form-select" id="select_list_regiao"
+                                    onchange="window.location.reload();">
                                     <option value="0">Todas</option>
                                     <option value="São Paulo">São Paulo</option>
                                     <option value="Norte">Região Norte</option>
@@ -180,7 +182,6 @@
     var long = []
     var latLon = { "latitude": lati, "longitude": long };
 
-    criarMapaCaixas()
 
     function listarQuantidade() {
 
@@ -244,6 +245,7 @@
     }
 
     function selectRegiao() {
+
         var cnpjVar = sessionStorage.BANCO_ID
 
         table_body.innerHTML = "";
@@ -323,6 +325,18 @@
     }
 
     function criarMapaCaixas() {
+
+        var cnpjVar = sessionStorage.BANCO_ID
+
+        table_body.innerHTML = "";
+
+        if (select_list_regiao.value == 0) {
+            var selectVar = 1;
+        } else {
+            var selectVar = 2;
+            var queryVar = select_list_regiao.value;
+        }
+
         var cnpjVar = sessionStorage.BANCO_ID
 
         fetch("/usuarios/criarMapaCaixas", {
@@ -331,12 +345,16 @@
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                cnpjServer: cnpjVar
+                cnpjServer: cnpjVar,
+                selectServer: selectVar,
+                queryServer: queryVar,
             })
         }).then(function (resposta) {
+
             console.log("resposta: ", resposta);
             if (resposta.ok) {
                 resposta.json().then(json => {
+
                     cep = json[0].cep;
 
                     var ceps = []
@@ -344,13 +362,14 @@
                     for (let i = 0; i < json.length; i++) {
                         ceps[i] = json[i].cep;
 
+
                         var script = document.createElement('script');
                         script.src = 'https://viacep.com.br/ws/' + ceps[i] + '/json/?callback=performGeocodingRequest2'
-                        document.body.appendChild(script);
 
+                        document.body.appendChild(script);
+                        
                     }
                 })
-                console.log("Sucesso ao plotar mapa");
             } else {
                 throw ("Houve um erro ao plotar mapa");
             }
@@ -401,15 +420,14 @@
         // return JSON.parse(xmlHttp.responseText).data;
 
         lati.push(dados[0].lat)
-        latLon.latitude = lati
         long.push(dados[0].lon)
-        latLon.longitude = long
 
     }
 
     function gerarMapa() {
 
         const cities = L.layerGroup();
+
 
         for (var i = 0; i < latLon.latitude.length; i++) {
             var nome = "local" + i
@@ -428,6 +446,10 @@
                 ;
             }
         }
+
+
+
+        console.log("Sucesso ao plotar mapa");
 
     }
 
@@ -449,6 +471,6 @@
     }
 
 
-    setTimeout(gerarMapa, 1000)
+    setTimeout(gerarMapa, 2000)
 
 </script>
