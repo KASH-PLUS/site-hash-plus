@@ -1412,11 +1412,11 @@
 
 					for (let i = 0; i < resposta.length; i++) {
 
-						if (resposta[i] <= 0.0) {
+						if (resposta[i].CPU <= 0.0) {
 							cal = 8;
-						} else if (resposta[i] >= 85.0) {
+						} else if (resposta[i].CPU >= 85.0) {
 							cal = 4;
-						} else if (resposta[i] >= 70.0) {
+						} else if (resposta[i].CPU >= 70.0) {
 							cal = 2;
 						} else {
 							cal = 0;
@@ -1443,7 +1443,7 @@
 
 					for (let i = 0; i < resposta.length; i++) {
 
-						porcRam = (resposta[i] * 100) / valorMaximoR;
+						porcRam = (resposta[i].RAM * 100) / valorMaximoR;
 
 						if (porcRam <= 0.0) {
 							cal = 8;
@@ -1494,7 +1494,7 @@
 
 					for (let i = 0; i < resposta.length; i++) {
 
-						porcentagemDisco = Math.round((resposta[i] / valorMaximoD) * 100);
+						porcentagemDisco = Math.round((resposta[i].Disco / valorMaximoD) * 100);
 
 						if (porcentagemDisco <= 0.0) {
 							cal = 8;
