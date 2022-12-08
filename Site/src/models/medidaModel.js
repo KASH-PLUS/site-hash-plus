@@ -39,7 +39,8 @@ function buscarUltimasCondicaoCpu(serialNumber) {
                             where Componente = 'cpu' 
                             and NumeroSerial = '${serialNumber}' 
                             and cast(Horario as time) between '10:00:00' and '23:59:00'
-                        group by CONVERT(varchar, Horario, 111);`;
+                        group by CONVERT(varchar, Horario, 111)
+						order by CONVERT(varchar, Horario, 111) desc;`;
     } else if (process.env.AMBIENTE_PROCESSO == "desenvolvimento") {
         instrucaoSql = `select 
                             round(avg(Registro),2) as 'CPU'	
@@ -48,7 +49,7 @@ function buscarUltimasCondicaoCpu(serialNumber) {
                             and NumeroSerial = '${serialNumber}' 
                             and cast(Horario as time) between '10:00:00' and '23:59:00'
                         group by cast(Horario as date)
-                        limit 7;`;
+                        order by cast(Horario as date) desc limit 7;`;
     } else {
         console.log("\nO AMBIENTE (produção OU desenvolvimento) NÃO FOI DEFINIDO EM app.js\n");
         return
@@ -70,7 +71,8 @@ function buscarUltimasCondicaoRam(serialNumber) {
                             where Componente = 'ram' 
                             and NumeroSerial = '${serialNumber}' 
                             and cast(Horario as time) between '10:00:00' and '23:59:00'
-                        group by CONVERT(varchar, Horario, 111);`;
+                        group by CONVERT(varchar, Horario, 111)
+						order by CONVERT(varchar, Horario, 111) desc;`;
     } else if (process.env.AMBIENTE_PROCESSO == "desenvolvimento") {
         instrucaoSql = `select 
                             round(avg(Registro),2) as 'RAM'	
@@ -79,7 +81,7 @@ function buscarUltimasCondicaoRam(serialNumber) {
                             and NumeroSerial = '${serialNumber}'
                             and cast(Horario as time) between '10:00:00' and '23:59:00'
                         group by cast(Horario as date)
-                        limit 7;`;
+                        order by cast(Horario as date) desc limit 7;`;
     } else {
         console.log("\nO AMBIENTE (produção OU desenvolvimento) NÃO FOI DEFINIDO EM app.js\n");
         return
@@ -101,7 +103,8 @@ function buscarUltimasCondicaoDisco(serialNumber) {
                             where Componente = 'disco' 
                             and NumeroSerial = '${serialNumber}' 
                             and cast(Horario as time) between '10:00:00' and '23:59:00'
-                        group by CONVERT(varchar, Horario, 111);`;
+                        group by CONVERT(varchar, Horario, 111)
+						order by CONVERT(varchar, Horario, 111) desc;`;
     } else if (process.env.AMBIENTE_PROCESSO == "desenvolvimento") {
         instrucaoSql = `select 
                             DATE_FORMAT(Horario,'%Y/%m/%d') as 'Data',
@@ -111,7 +114,7 @@ function buscarUltimasCondicaoDisco(serialNumber) {
                             and NumeroSerial = '${serialNumber}' 
                             and cast(Horario as time) between '10:00:00' and '23:59:00'
                         group by cast(Horario as date)
-                        limit 7;`;
+                        order by cast(Horario as date) desc limit 7;`;
     } else {
         console.log("\nO AMBIENTE (produção OU desenvolvimento) NÃO FOI DEFINIDO EM app.js\n");
         return
